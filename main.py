@@ -1,10 +1,10 @@
 
 
-# Dollar-cost averaging (DCA) simulator - monthly investments over time
-# Get available date range - so users know valid dates
-# Input validation - handle invalid dates, negative amounts, dates outside your data range
-# Error handling - return proper error messages when things go wrong
 
+
+
+# Error handling - return proper error messages when things go wrong
+import datetime as dt
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -17,7 +17,7 @@ async def root():
 	return {"message": "Hello World"}
 
 
-# Lump sum calculator with growth data (what you're building now)
+# Lump sum calculation without growth data 
 @app.post("/calculate_lumpsum")
 def calculate_lumpsum(start_date:str, start_amount:float):
 
@@ -41,6 +41,7 @@ def calculate_lumpsum(start_date:str, start_amount:float):
 		"return_percentage": (return_percent_value - 1)*100
 	}
 
+# Lump sum calculation with growth data 
 @app.post("/calcualte_growth_lumpsum")
 def calculate_growth_lumpsum(start_date:str, start_amount:float):
 	# Use formula New_Balance:  
@@ -61,6 +62,97 @@ def calculate_growth_lumpsum(start_date:str, start_amount:float):
 	return {
 		"growth_overtime": growth_overtime
 	}
+
+# Dollar-cost averaging (DCA) simulator - monthly investments over time
+@app.post("/calculate_dca_growth")
+def calculate_dca_growth(start_date:str, initial_contribution:float, recurring_contribution:float):
+
+	# initial amount -> Growth -> Add contribution -> new_amount 
+	#  |------------------------------------------------------|
+	idx = df.index[df["Date"] == start_date][0]
+	current_balance = initial_contribution
+	growth_overtime = []
+	old_price = df["SP500_Close"].iloc[idx]
+	contribution = initial_contribution
+
+	for i in range(idx, len(df)):
+		new_price = df["SP500_Close"].iloc[i]
+		current_balance = current_balance * (new_price/old_price)
+		current_balance = current_balance + recurring_contribution
+		contribution = contribution + recurring_contribution
+		growth_overtime.append(round(current_balance, 2))
+		old_price = new_price
+	
+	current_balance = round(current_balance,2)
+	your_contribution = round(contribution, 2)
+	total_interest_earned = round(current_balance - contribution,2)
+	return {
+		"growth_overtime": growth_overtime,
+		"current_balance": current_balance,
+		"your_contribution": your_contribution,
+		"total_interest_earned": total_interest_earned
+	}
+
+# Get available date range - so users know valid dates
+@app.get("/get_valid_date_range")
+def get_valid_date_range():
+	first_date = df["Date"].iloc[0]
+	end_date = df["Date"].iloc[-1]
+
+	return {
+		"first_date": first_date,
+		"end_date": end_date
+	}
+
+# Input validation - handle invalid dates, negative amounts, dates outside your data range
+@app.post("/validate_inputs")
+def validate_inputs(start_date:str, 
+					initial_contribution: Optional[float] = None, 
+					recurring_contribution: Optional[float] = None, 
+					start_amount: Optional[float] = None):
+	
+	first_date = df["Date"].iloc[0]
+	last_date = df["Date"].iloc[-1]
+	format_string = "%Y-%m-%d"
+	given_date_object = dt.strptime(start_date, format_string)
+	first_date_object = dt.strptime(first_date, format_string)
+	last_date_object = dt.strptime(last_date, format_string)
+
+	if (given_date_object < first_date_object or given_date_object > last_date_object):
+		return{
+			"valid": False,
+        	"errors": ["Date is outside valid range"]
+		}
+	
+	if (initial_contribution != None and initial_contribution < 0 ):
+		return{
+			"valid": False,
+        	"errors": ["Initial Contribution is negative"]
+		}
+	
+	if(recurring_contribution != None and recurring_contribution < 0):
+		return{
+			"valid": False,
+        	"errors": ["Recurring Contribution is negative"]
+		}
+	
+	if(start_amount != None and start_amount < 0):
+		return{
+			"valid": False,
+        	"errors": ["Start Amount is negative"]
+		}
+	
+	return {
+    "valid": True,
+    "errors": []
+}
+
+
+
+
+
+
+
 
 		
 		 

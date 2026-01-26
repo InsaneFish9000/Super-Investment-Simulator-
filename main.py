@@ -19,8 +19,10 @@ async def root():
 
 
 # Lump sum calculation without growth data 
-@app.post("/calculate_lumpsum")
-def calculate_lumpsum(start_date:str, start_amount:float):
+@app.post("/calculate_lump_sum")
+def calculate_lump_sum(
+	start_date:str, 
+	start_amount:float):
 
 	# TODO: Load data from CSV - Loaded in memory once
 	# TODO: Find price at start_date 
@@ -43,11 +45,14 @@ def calculate_lumpsum(start_date:str, start_amount:float):
 	}
 
 # Lump sum calculation with growth data 
-@app.post("/calcualte_growth_lumpsum")
-def calculate_growth_lumpsum(start_date:str, start_amount:float):
+@app.post("/calculate_growth_lump_sum")
+def calculate_growth_lump_sum(
+	start_date:str, 
+	start_amount:float):
+
 	# Use formula New_Balance:  
 	# 	Current_Balance x (New_Price/Old_Price)
-	# store the growth of the lumpsum deposit
+	# store the growth of the lump_sum deposit
 
 	idx = df.index[df["Date"] == start_date][0]
 	current_balance = start_amount
@@ -66,7 +71,10 @@ def calculate_growth_lumpsum(start_date:str, start_amount:float):
 
 # Dollar-cost averaging (DCA) simulator - monthly investments over time
 @app.post("/calculate_dca_growth")
-def calculate_dca_growth(start_date:str, initial_contribution:float, recurring_contribution:float):
+def calculate_dca_growth(
+	start_date:str, 
+	initial_contribution:float, 
+	recurring_contribution:float):
 
 	# initial amount -> Growth -> Add contribution -> new_amount 
 	#  |------------------------------------------------------|
@@ -107,10 +115,11 @@ def get_valid_date_range():
 
 # Input validation - handle invalid dates, negative amounts, dates outside your data range
 @app.post("/validate_inputs")
-def validate_inputs(start_date:str, 
-					initial_contribution: Optional[float] = None, 
-					recurring_contribution: Optional[float] = None, 
-					start_amount: Optional[float] = None):
+def validate_inputs(
+	start_date:str, 
+	initial_contribution: Optional[float] = None, 
+	recurring_contribution: Optional[float] = None, 
+	start_amount: Optional[float] = None):
 	
 	error_messages = []
 	first_date = df["Date"].iloc[0]

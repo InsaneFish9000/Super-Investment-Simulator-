@@ -1,85 +1,66 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import Dashboard from './components/Dashboard.vue'
 </script>
 
+<!-- This is the top dashboard with VUE logo and InvestTrack -->
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="app-container">
+    <nav class="top-nav">
+      <div class="logo-area">
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="30" height="30" />
+        <span class="brand-name">InvestTrack</span>
+      </div>
+      <div class="user-profile">
+        <span>Demo User</span>
+      </div>
+    </nav>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <main>
+      <Dashboard />
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style>
+/* Reset and Global Styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #9fe2cc; /* Light grey background for the whole app */
+  font-family: 'Inter', sans-serif;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.app-container {
+  min-height: 100vh;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background-color: #1a202c; /* Dark navy professional feel */
+  color: white;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.brand-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.user-profile {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+main {
+  padding-top: 1rem;
 }
 </style>
